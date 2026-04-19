@@ -1,0 +1,86 @@
+В памяти хранится массив пользователей. При регистрации пароль хешируется через bcrypt. При логине пароль сравнивается с хешем. Если логин успешный, сервер выдаёт JWT на 15 минут. Для защищённых маршрутов токен проверяется middleware-функцией authenticate. В токене есть роль, поэтому на /admin дополнительно проверяется, что роль равна admin. После трёх ошибок вход блокируется на минуту. Также хранится только один activeToken, поэтому новый вход делает старую сессию невалидной
+
+1.Запускаю сервер:
+cd C:\Users\User\auth-service
+npm start
+
+2.Неверный пароль:
+Invoke-WebRequest -Method Post `
+  -Uri http://localhost:3000/login `
+  -ContentType "application/json" `
+  -Body '{"username":"admin","password":"wrong"}'
+Возвращается 401
+
+3.Три попытки и блокировка:
+ещё 2 раза та же команда, потом:
+Invoke-WebRequest -Method Post `
+  -Uri http://localhost:3000/login `
+  -ContentType "application/json" `
+  -Body '{"username":"admin","password":"admin123"}'
+Аккаунт заблокирован на минуту
+
+4.Вход под admin:
+Start-Sleep -Seconds 61
+
+$adminLogin = Invoke-RestMethod -Method Post `
+  -Uri http://localhost:3000/login `
+  -ContentType "application/json" `
+  -Body '{"username":"admin","password":"admin123"}'
+
+$adminToken = $adminLogin.token
+
+5.Доступ в /admin:
+Invoke-RestMethod -Method Get `
+  -Uri http://localhost:3000/admin `
+  -Headers @{ Authorization = "Bearer $adminToken" }
+Администратор проходит
+
+6.Обычный пользователь не проходит:
+Invoke-RestMethod -Method Post `
+  -Uri http://localhost:3000/register `
+  -ContentType "application/json" `
+  -Body '{"username":"ivan","password":"123456","role":"user"}'
+
+$userLogin = Invoke-RestMethod -Method Post `
+  -Uri http://localhost:3000/login `
+  -ContentType "application/json" `
+  -Body '{"username":"ivan","password":"123456"}'
+
+$userToken = $userLogin.token
+
+Invoke-WebRequest -Method Get `
+  -Uri http://localhost:3000/admin `
+  -Headers @{ Authorization = "Bearer $userToken" }
+Обычный пользователь получает 403 Forbidden.
+
+7.Одна активная сессия:
+$login1 = Invoke-RestMethod -Method Post `
+  -Uri http://localhost:3000/login `
+  -ContentType "application/json" `
+  -Body '{"username":"ivan","password":"123456"}'
+$token1 = $login1.token
+
+$login2 = Invoke-RestMethod -Method Post `
+  -Uri http://localhost:3000/login `
+  -ContentType "application/json" `
+  -Body '{"username":"ivan","password":"123456"}'
+$token2 = $login2.token
+
+Потом:
+
+Invoke-WebRequest -Method Get `
+  -Uri http://localhost:3000/admin `
+  -Headers @{ Authorization = "Bearer $token1" }
+
+Старый токен уже не работает, потому что новый логин сбросил старую сессию
+
+Про JWT
+Токен действует 15 минут. Если подождать 15 минут и отправить запрос снова, сервер вернёт 401, потому что токен истёк.
+
+
+
+
+
+
+
+
