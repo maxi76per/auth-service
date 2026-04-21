@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Auth Service</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast"></div>
+
+    <div class="container">
+        <div class="glass-panel">
+            <h1 id="form-title">Вход в систему</h1>
+            <p class="subtitle">Защищенный микросервис аутентификации</p>
+
+            <!-- Login Form -->
+            <form id="login-form" class="auth-form active">
+                <div class="input-group">
+                    <label for="login-username">Имя пользователя</label>
+                    <input type="text" id="login-username" required>
+                </div>
+                <div class="input-group">
+                    <label for="login-password">Пароль</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button type="submit" class="btn primary-btn">Войти</button>
+                <div class="form-links">
+                    <a href="#" onclick="switchForm('register')">Создать аккаунт</a>
+                    <a href="#" onclick="switchForm('recover')">Забыли пароль?</a>
+                </div>
+            </form>
+
+            <!-- Register Form -->
+            <form id="register-form" class="auth-form">
+                <div class="input-group">
+                    <label for="reg-username">Имя пользователя</label>
+                    <input type="text" id="reg-username" required>
+                </div>
+                <div class="input-group">
+                    <label for="reg-password">Пароль</label>
+                    <input type="password" id="reg-password" required>
+                </div>
+                <div class="input-group">
+                    <label for="reg-role">Роль (для тестов)</label>
+                    <select id="reg-role">
+                        <option value="user">Пользователь</option>
+                        <option value="moderator">Модератор</option>
+                        <option value="admin">Администратор</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn primary-btn">Зарегистрироваться</button>
+                <div class="form-links center">
+                    <a href="#" onclick="switchForm('login')">Уже есть аккаунт? Войти</a>
+                </div>
+            </form>
+
+            <!-- Recover Form -->
+            <form id="recover-form" class="auth-form">
+                <div class="input-group">
+                    <label for="rec-username">Имя пользователя</label>
+                    <input type="text" id="rec-username" required>
+                </div>
+                <button type="submit" class="btn primary-btn">Получить токен</button>
+                <div class="form-links center">
+                    <a href="#" onclick="switchForm('login')">Вернуться ко входу</a>
+                </div>
+            </form>
+
+            <!-- Reset Form -->
+            <form id="reset-form" class="auth-form">
+                <p class="info-text">Токен был сгенерирован и (в теории) отправлен вам.</p>
+                <div class="input-group">
+                    <label for="reset-token">Одноразовый токен</label>
+                    <input type="text" id="reset-token" required>
+                </div>
+                <div class="input-group">
+                    <label for="reset-password">Новый пароль</label>
+                    <input type="password" id="reset-password" required>
+                </div>
+                <input type="hidden" id="reset-username">
+                <button type="submit" class="btn primary-btn">Изменить пароль</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

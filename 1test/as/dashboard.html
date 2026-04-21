@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="toast" class="toast"></div>
+
+    <div class="container dashboard-container">
+        <div class="glass-panel">
+            <div class="header">
+                <h1>Личный кабинет</h1>
+                <button id="logout-btn" class="btn" style="width: auto; padding: 10px 20px; background: rgba(255,255,255,0.1);">Выйти</button>
+            </div>
+
+            <div class="user-info">
+                <h3>Информация о пользователе:</h3>
+                <p>ID: <span id="user-id">...</span></p>
+                <p>Имя пользователя: <strong id="user-name">...</strong></p>
+                <p>Роль: <span id="user-role" style="color: #a78bfa; font-weight: bold;">...</span></p>
+                <p>Последний вход: <span id="user-lastlogin">...</span></p>
+            </div>
+
+            <!-- Admin Section (Hidden by default) -->
+            <div id="admin-panel" class="admin-section" style="display: none;">
+                <h3 style="color: #ef4444; margin-bottom: 10px;">Панель администратора</h3>
+                <p>Вы имеете доступ к этому блоку, так как ваша роль — <strong>admin</strong>.</p>
+                <button id="fetch-admin-data" class="btn primary-btn" style="background: #ef4444; margin-top: 15px;">Загрузить секретные данные</button>
+                <pre id="admin-data-output" style="display: none; margin-top: 15px;"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            if(!toast) return;
+            toast.textContent = message;
+            toast.className = `toast ${type} show`;
+            setTimeout(() => { toast.className = `toast ${type}`; }, 4000);
+        }
+
+        async function fetchUserData() {
+            try {
+                const res = await fetch('/api/me');
+                if (!res.ok) {
+                    window.location.href = '/';
+                    return;
+                }
+                const data = await res.json();
+                document.getElementById('user-id').textContent = data.id;
+                document.getElementById('user-name').textContent = data.username;
+                document.getElementById('user-role').textContent = data.role;
+                
+                const loginDate = data.lastLogin ? new Date(data.lastLogin).toLocaleString() : 'Только что';
+                document.getElementById('user-lastlogin').textContent = loginDate;
+
+                if (data.role === 'admin') {
+                    document.getElementById('admin-panel').style.display = 'block';
+                }
+            } catch (err) {
+                window.location.href = '/';
+            }
+        }
+
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            await fetch('/api/logout', { method: 'POST' });
+            window.location.href = '/';
+        });
+
+        document.getElementById('fetch-admin-data').addEventListener('click', async () => {
+            try {
+                const res = await fetch('/api/admin-data');
+                const data = await res.json();
+                
+                if (res.ok) {
+                    const output = document.getElementById('admin-data-output');
+                    output.style.display = 'block';
+                    output.textContent = JSON.stringify(data, null, 2);
+                    showToast('Данные получены', 'success');
+                } else {
+                    showToast(data.error || 'Ошибка доступа', 'error');
+                }
+            } catch (err) {
+                showToast('Сетевая ошибка', 'error');
+            }
+        });
+
+        // Initialize
+        fetchUserData();
+    </script>
+</body>
+</html>
