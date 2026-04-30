@@ -1,0 +1,154 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Hotel System FINAL RU">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- USER -->
+        <mxCell id="user" value="Пользователь" style="rectangle;" vertex="1" parent="1">
+          <mxGeometry x="40" y="220" width="140" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- FRONTEND -->
+        <mxCell id="frontend" value="Фронтенд" style="rectangle;" vertex="1" parent="1">
+          <mxGeometry x="240" y="200" width="180" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- BROKER -->
+        <mxCell id="broker" value="Брокер сообщений" style="shape=cylinder;" vertex="1" parent="1">
+          <mxGeometry x="260" y="350" width="180" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- BACKEND -->
+        <mxCell id="backend" value="Бэкенд" style="rectangle;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="480" y="100" width="500" height="380" as="geometry"/>
+        </mxCell>
+
+        <!-- SERVICES -->
+        <mxCell id="booking" value="Сервис бронирования" style="rectangle;" vertex="1" parent="backend">
+          <mxGeometry x="20" y="20" width="160" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="room" value="Сервис номеров" style="rectangle;" vertex="1" parent="backend">
+          <mxGeometry x="260" y="20" width="160" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="payment" value="Платёжный сервис" style="rectangle;" vertex="1" parent="backend">
+          <mxGeometry x="20" y="140" width="160" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="notify" value="Сервис уведомлений" style="rectangle;" vertex="1" parent="backend">
+          <mxGeometry x="260" y="140" width="160" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- DB -->
+        <mxCell id="db" value="База данных" style="shape=cylinder;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="220" width="140" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- EXTERNAL -->
+        <mxCell id="extPay" value="Платёжный шлюз" style="rectangle;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="360" width="160" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="extNotify" value="Сервис Email/SMS" style="rectangle;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="460" width="160" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- EDGES -->
+        <mxCell edge="1" parent="1" source="user" target="frontend" value="ввод данных">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell edge="1" parent="1" source="frontend" target="user" value="результаты">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell edge="1" parent="1" source="frontend" target="booking" value="данные бронирования">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell edge="1" parent="1" source="booking" target="frontend" value="статус брони">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- FRONTEND ↔ BROKER -->
+        <mxCell edge="1" parent="1" source="frontend" target="broker" value="публикация события">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell edge="1" parent="1" source="broker" target="frontend" value="обновление события">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell edge="1" parent="1" source="booking" target="room" value="запрос доступности">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell edge="1" parent="1" source="room" target="booking" value="доступные номера">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell edge="1" parent="1" source="booking" target="payment" value="оплата">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell edge="1" parent="1" source="payment" target="booking" value="статус оплаты">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell edge="1" parent="1" source="booking" target="notify" value="уведомление">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell edge="1" parent="1" source="booking" target="broker" value="событие: создана бронь">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell edge="1" parent="1" source="broker" target="notify" value="событие уведомления">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- DB -->
+        <mxCell edge="1" parent="1" source="booking" target="db" value="вставка брони">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell edge="1" parent="1" source="booking" target="db" value="получение доступности">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell edge="1" parent="1" source="booking" target="db" value="обновление статуса">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell edge="1" parent="1" source="room" target="db" value="получение номеров">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell edge="1" parent="1" source="db" target="room" value="данные номеров">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- EXTERNAL -->
+        <mxCell edge="1" parent="1" source="payment" target="extPay" value="запрос оплаты">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell edge="1" parent="1" source="extPay" target="payment" value="результат">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell edge="1" parent="1" source="notify" target="extNotify" value="отправка сообщения">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell edge="1" parent="1" source="extNotify" target="notify" value="статус доставки">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
